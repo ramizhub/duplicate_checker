@@ -92,31 +92,36 @@ int main(int argc, char * argv[])
                     int processed_bytes;
                     int sum_bytes = 0;
                     unsigned int task_length;
+                    int left_count;
                     int hash_length = 32;
                     
                     char task[PATH_MAX];
                     unsigned char sha256_hash[SHA256_DIGEST_LENGTH];
 
                     /*  Waiting for data to be received from the parent process. */
+                    left_count = sizeof(int);
                     do {
-                        processed_bytes = read(pipes[mwcr][0], &task_length, sizeof(int));
+                        processed_bytes = read(pipes[mwcr][0], &task_length, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in reading from pipe by file descriptor", "", "", -1);
                             return -1;
                         }
                         sum_bytes += processed_bytes;
+                        left_count -= processed_bytes;
                     } while(sum_bytes != sizeof(int));
                     show_debug_info("child process", "successfully read bytes from parent in 'task_length' variable", "count of read bytes", "", sum_bytes);
                     sum_bytes = 0;
                     
 
+                    left_count = sizeof(char) * task_length;
                     do {
-                        processed_bytes = read(pipes[mwcr][0], task, sizeof(char) * task_length);
+                        processed_bytes = read(pipes[mwcr][0], task, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in reading from pipe by file descriptor", "", "", -1);
                             return -1;
                         }
                         sum_bytes += processed_bytes;
+                        left_count -= processed_bytes;
                     } while(sum_bytes != sizeof(char) * task_length);
                     show_debug_info("child process", "successfully read bytes from parent in 'task' variable", "count of read bytes", "", sum_bytes);
                     show_debug_info("child process", "successfully read bytes from parent in 'task' variable", "variable value", task, -1);
@@ -129,38 +134,44 @@ int main(int argc, char * argv[])
             
 
                     /*  Sending processed data to parent. */
+                    left_count = sizeof(int);
                     do {
-                        processed_bytes = write(pipes[cwmr][1], &task_length, sizeof(int));
+                        processed_bytes = write(pipes[cwmr][1], &task_length, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in writing in pipe by file descriptor", "", "", -1);
                             return -1;
                         }
                         sum_bytes += processed_bytes;
+                        left_count -= processed_bytes;
                     } while(sum_bytes != sizeof(int));
                     show_debug_info("child process", "successfully send bytes to master of 'task_length' variable", "count of sended bytes", "", sum_bytes);
                     sum_bytes = 0;
                     
 
+                    left_count = sizeof(char) * task_length;
                     do {
-                        processed_bytes = write(pipes[cwmr][1], task, sizeof(char) * task_length);
+                        processed_bytes = write(pipes[cwmr][1], task, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in writing in pipe by file descriptor", "", "", -1);
                             return -1;
                         }
                         sum_bytes += processed_bytes;
+                        left_count -= processed_bytes;
                     } while(sum_bytes != sizeof(char) * task_length);
                     show_debug_info("child process", "successfully send bytes to master of 'task' variable", "count of sended bytes", "", sum_bytes);
                     show_debug_info("child process", "successfully send bytes to master of 'task' variable", "variable value", task, -1);
                     sum_bytes = 0;
 
 
+                    left_count = sizeof(unsigned char) * hash_length;
                     do {
-                        processed_bytes = write(pipes[cwmr][1], sha256_hash, sizeof(unsigned char) * hash_length);
+                        processed_bytes = write(pipes[cwmr][1], sha256_hash, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in writing in pipe by file descriptor", "", "", -1);
                             return -1;
                         }
                         sum_bytes += processed_bytes;
+                        left_count -= processed_bytes;
                     } while(sum_bytes != sizeof(unsigned char) * hash_length);
                     show_debug_info("child process", "successfully send bytes to master of 'hash_length' variable", "count of sended bytes", "", sum_bytes);
                     sum_bytes = 0;

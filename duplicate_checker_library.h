@@ -349,66 +349,77 @@ int send_tasks_fill_report_storage(GHashTable * report_storage, int rows, int co
             int task_length = strlen(TT[pi][ti]) + 1;
             unsigned char sha256_hash[SHA256_DIGEST_LENGTH];
             int hash_length = 32;
+            int left_count;
             char task[PATH_MAX];
 
 
             /* Sending data to child processes. */
+            left_count = sizeof(int);
             do {
-                processed_bytes = write(pipes[mwcr][1], &task_length, sizeof(int));
+                processed_bytes = write(pipes[mwcr][1], &task_length, left_count);
                 if(processed_bytes == -1) {
                     show_debug_info("send_tasks_fill_report_storage", "error in writing in pipe by file descriptor", "", "", -1);
                     return -1;
                 }
                 sum_bytes += processed_bytes;
+                left_count -= processed_bytes;
             } while(sum_bytes != sizeof(int));
             show_debug_info("send_tasks_fill_report_storage", "successfully send bytes from 'hash_length' variable in child", "count of sended bytes", "", sum_bytes);
             sum_bytes = 0;
 
 
+            left_count = sizeof(char) * task_length;
             do {
-                processed_bytes = write(pipes[mwcr][1], TT[pi][ti], sizeof(char) * task_length);
+                processed_bytes = write(pipes[mwcr][1], TT[pi][ti], left_count);
                 if(processed_bytes == -1) {
                     show_debug_info("send_tasks_fill_report_storage", "error in writing in pipe by file descriptor", "", "", -1);
                     return -1;
                 }
                 sum_bytes += processed_bytes;
+                left_count -= processed_bytes;
             } while(sum_bytes != sizeof(char) * task_length);
             show_debug_info("send_tasks_fill_report_storage", "successfully send bytes from 'task' variable in child", "count of sended bytes", "", sum_bytes);
             sum_bytes = 0;
 
 
             /* Receiving processed data from child processes. */
+            left_count = sizeof(int);
             do {
-                processed_bytes = read(pipes[cwmr][0], &task_length, sizeof(int));
+                processed_bytes = read(pipes[cwmr][0], &task_length, left_count);
                 if(processed_bytes == -1) {
                     show_debug_info("send_tasks_fill_report_storage", "error in reading from pipe by file descriptor", "", "", -1);
                     return -1;
                 }
                 sum_bytes += processed_bytes;
+                left_count -= processed_bytes;
             } while(sum_bytes != sizeof(int));
             show_debug_info("send_tasks_fill_report_storage", "successfully read bytes in 'hash_length' variable from child", "count of read bytes", "", sum_bytes);
             sum_bytes = 0;
 
 
+            left_count = sizeof(char) * task_length;
             do {
-                processed_bytes = read(pipes[cwmr][0], task, sizeof(char) * task_length);
+                processed_bytes = read(pipes[cwmr][0], task, left_count);
                 if(processed_bytes == -1) {
                     show_debug_info("send_tasks_fill_report_storage", "error in reading from pipe by file descriptor", "", "", -1);
                     return -1;
                 }
                 sum_bytes += processed_bytes;
+                left_count -= processed_bytes;
             } while(sum_bytes != sizeof(char) * task_length);
             show_debug_info("send_tasks_fill_report_storage", "successfully read bytes in 'task' variable from child", "count of read bytes", "", sum_bytes);
             sum_bytes = 0;
 
 
+            left_count = sizeof(unsigned char) * hash_length;
             do {
-                processed_bytes = read(pipes[cwmr][0], sha256_hash, sizeof(unsigned char) * hash_length);
+                processed_bytes = read(pipes[cwmr][0], sha256_hash, left_count);
                 if(processed_bytes == -1) {
                     show_debug_info("send_tasks_fill_report_storage", "error in reading from pipe by file descriptor", "", "", -1);
                     return -1;
                 }
                 sum_bytes += processed_bytes;
+                left_count -= processed_bytes;
             } while(sum_bytes != sizeof(unsigned char) * hash_length);
             show_debug_info("send_tasks_fill_report_storage", "successfully read bytes in 'sha256_hash' variable from child", "count of read bytes", "", sum_bytes);
             
