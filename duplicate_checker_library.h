@@ -51,11 +51,11 @@ void show_debug_info(char section_name[], char definition[], char str_data1[], c
 
 
 
-
+/* A function that copies one line to another. It was created in order not to load other parts of the code with error checks. */
 int copy_in_string(char * dest, char * src, int dest_length, int src_length)
 {   
     if(dest == NULL || src == NULL) {
-        show_debug_info("copy_in_string", "bad strings copying", dest, src, -1);
+        show_debug_info("copy_in_string", "destination and source strings can not be NULL", dest, src, -1);
         return -1;
     }
 
@@ -260,7 +260,7 @@ int kill_workers(int pids[], int limit)
 *
 *   This function opens file, reads by file descriptor, generates hash basing on file content and closes file.
 */
-int make_sha256_hash(char * task, unsigned char * hash_target)
+int make_sha256_hash(char * path, unsigned char * hash_target)
 {   
     int fd;
     int i;
@@ -269,27 +269,27 @@ int make_sha256_hash(char * task, unsigned char * hash_target)
     SHA256_CTX sha256_ctx;
     SHA256_Init(&sha256_ctx);
 
-    if((fd = open(task, O_RDONLY, 0)) == -1) {
-        show_debug_info("make_sha256_hash", "can't open file by file_descriptor", task, "", -1);
+    if((fd = open(path, O_RDONLY, 0)) == -1) {
+        show_debug_info("make_sha256_hash", "can't open file by file_descriptor", path, "", -1);
         return -1;
     }
-    show_debug_info("make_sha256_hash", "succesfully opened file by file descriptor", "file", task, -1);
+    show_debug_info("make_sha256_hash", "succesfully opened file by file descriptor", "file", path, -1);
 
     do {
         if((i = read(fd, BUFFER, BUFFSIZE)) == -1) {
-            show_debug_info("make_sha256_hash", "can't read file by file_descriptor", task, "", -1);
+            show_debug_info("make_sha256_hash", "can't read file by file_descriptor", path, "", -1);
             return -1;
         }
         SHA256_Update(&sha256_ctx, BUFFER, i);
     } while(i > 0);
-    show_debug_info("make_sha256_hash", "succesfully read bytes from file and made hash", "file", task, -1);
+    show_debug_info("make_sha256_hash", "succesfully read bytes from file and made hash", "file", path, -1);
 
     if(close(fd) == -1) {
-       show_debug_info("make_sha256_hash", "can't close file by file_descriptor", task, "", -1);
+       show_debug_info("make_sha256_hash", "can't close file by file_descriptor", path, "", -1);
        return -1;
     }
     
-    show_debug_info("make_sha256_hash", "succesfully closed file by file_descriptor", "file", task, -1);
+    show_debug_info("make_sha256_hash", "succesfully closed file by file_descriptor", "file", path, -1);
     SHA256_Final(hash_target, &sha256_ctx);    
 }
 

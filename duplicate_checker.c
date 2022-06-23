@@ -43,7 +43,6 @@ int main(int argc, char * argv[])
 
     /* Take away the main process from this number and get the number of child processes. */
     process_count -= 1;
-    show_debug_info("main", "count of processes has been reduced by one", "count of processes now", "", process_count);
 
     /* 
     *   GHashTable g_hash_table_new (GHashFunc hash_func, GEqualFunc key_equal_func). Source: https://docs.gtk.org/glib/index.html.
@@ -92,7 +91,7 @@ int main(int argc, char * argv[])
                 for(int ti = 0; ti < task_per_worker; ti++) {
                     int processed_bytes;
                     int sum_bytes = 0;
-                    int task_length;
+                    unsigned int task_length;
                     int hash_length = 32;
                     
                     char task[PATH_MAX];
@@ -122,7 +121,11 @@ int main(int argc, char * argv[])
                     show_debug_info("child process", "successfully read bytes from parent in 'task' variable", "count of read bytes", "", sum_bytes);
                     show_debug_info("child process", "successfully read bytes from parent in 'task' variable", "variable value", task, -1);
                     sum_bytes = 0;        
-                    make_sha256_hash(task, sha256_hash);
+                    
+                    if(make_sha256_hash(task, sha256_hash) == -1) {
+                        show_debug_info("child process", "make_sha256_hash returned -1", "ended program", "", -1);
+                        exit(EXIT_FAILURE);
+                    }
             
 
                     /*  Sending processed data to parent. */
