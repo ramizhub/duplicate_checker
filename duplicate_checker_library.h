@@ -13,6 +13,8 @@
                 @@@@@@@@@@@@@   @@@@  @@   @@@&   @@   @@@@@@   @@@@   @        @@@@   @@@@@@@   @   @@@@@@@@@@@@@@@
                 @@@@@@@@@@@@@@        @@   @@@&   @@        @@        @@   @@@    @@        @@   @@   @@@@@@@@@@@@@@
                 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+                shorturl.at/bsAGR
 */
 
 #include <stdbool.h>
@@ -264,7 +266,7 @@ int make_sha256_hash(char * path, unsigned char * hash_target)
 {   
     int fd;
     int i;
-    char BUFFER[BUFFSIZE];
+    char buffer[BUFFSIZE];
 
     SHA256_CTX sha256_ctx;
     SHA256_Init(&sha256_ctx);
@@ -276,11 +278,11 @@ int make_sha256_hash(char * path, unsigned char * hash_target)
     show_debug_info("make_sha256_hash", "succesfully opened file by file descriptor", "file", path, -1);
 
     do {
-        if((i = read(fd, BUFFER, BUFFSIZE)) == -1) {
+        if((i = read(fd, buffer, BUFFSIZE)) == -1) {
             show_debug_info("make_sha256_hash", "can't read file by file_descriptor", path, "", -1);
             return -1;
         }
-        SHA256_Update(&sha256_ctx, BUFFER, i);
+        SHA256_Update(&sha256_ctx, buffer, i);
     } while(i > 0);
     show_debug_info("make_sha256_hash", "succesfully read bytes from file and made hash", "file", path, -1);
 

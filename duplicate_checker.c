@@ -13,6 +13,8 @@
                 @@@@@@@@@@@@@   @@@@  @@   @@@&   @@   @@@@@@   @@@@   @        @@@@   @@@@@@@   @   @@@@@@@@@@@@@@@
                 @@@@@@@@@@@@@@        @@   @@@&   @@        @@        @@   @@@    @@        @@   @@   @@@@@@@@@@@@@@
                 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                
+                shorturl.at/bsAGR
 */
 
 #include <stdio.h>
@@ -104,7 +106,7 @@ int main(int argc, char * argv[])
                         processed_bytes = read(pipes[mwcr][0], &task_length, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in reading from pipe by file descriptor", "", "", -1);
-                            return -1;
+                            exit(EXIT_FAILURE);
                         }
                         sum_bytes += processed_bytes;
                         left_count -= processed_bytes;
@@ -118,7 +120,7 @@ int main(int argc, char * argv[])
                         processed_bytes = read(pipes[mwcr][0], task, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in reading from pipe by file descriptor", "", "", -1);
-                            return -1;
+                            exit(EXIT_FAILURE);
                         }
                         sum_bytes += processed_bytes;
                         left_count -= processed_bytes;
@@ -139,7 +141,7 @@ int main(int argc, char * argv[])
                         processed_bytes = write(pipes[cwmr][1], &task_length, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in writing in pipe by file descriptor", "", "", -1);
-                            return -1;
+                            exit(EXIT_FAILURE);
                         }
                         sum_bytes += processed_bytes;
                         left_count -= processed_bytes;
@@ -153,7 +155,7 @@ int main(int argc, char * argv[])
                         processed_bytes = write(pipes[cwmr][1], task, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in writing in pipe by file descriptor", "", "", -1);
-                            return -1;
+                            exit(EXIT_FAILURE);
                         }
                         sum_bytes += processed_bytes;
                         left_count -= processed_bytes;
@@ -168,7 +170,7 @@ int main(int argc, char * argv[])
                         processed_bytes = write(pipes[cwmr][1], sha256_hash, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in writing in pipe by file descriptor", "", "", -1);
-                            return -1;
+                            exit(EXIT_FAILURE);
                         }
                         sum_bytes += processed_bytes;
                         left_count -= processed_bytes;
