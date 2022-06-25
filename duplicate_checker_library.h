@@ -54,14 +54,14 @@ void show_debug_info(char section_name[], char definition[], char str_data1[], c
 
 
 /* A function that copies one line to another. It was created in order not to load other parts of the code with error checks. */
-int copy_in_string(char * dest, char * src, int dest_length, int src_length)
+int copy_in_string(char * dest, char * src, int src_length)
 {   
     if(dest == NULL || src == NULL) {
         show_debug_info("copy_in_string", "destination and source strings can not be NULL", dest, src, -1);
         return -1;
     }
 
-    if(dest_length + src_length + 1 <= PATH_MAX)
+    if(src_length + 1 <= PATH_MAX)
         strncpy(dest, src, src_length + 1);                                 
     else {
         show_debug_info("copy_in_string", "not enough memory to copy string in other", src, dest, -1);
@@ -91,7 +91,7 @@ int make_file_name(char * dest, char * src, int dest_length, int src_length)
         show_debug_info("make_file_name", "not enough memory to concatenate string to", src, dest, -1);
         return -1;
     }
-    show_debug_info("copy_in_string", "succesfully made file name", src, dest, -1);
+    show_debug_info("make_file_name", "succesfully made file name", src, dest, -1);
 }
 
 
@@ -141,7 +141,7 @@ int accept_arguments(int argc, char * const argv[], int * process_count, int * t
         switch(option_character) {
             case 'f':
                 if(optarg != NULL)
-                    if(copy_in_string(folder_name, optarg, strlen(folder_name), strlen(optarg)) == -1)
+                    if(copy_in_string(folder_name, optarg, strlen(optarg)) == -1)
                         return -1;
                 break;
             case 'p':
@@ -214,7 +214,7 @@ int enter_task_in_TT(int rows, int columns, char TT[][columns][PATH_MAX], char *
     for(int r = 0; r < rows; r++)
         for(int c = 0; c < columns; c++)
             if(TT[r][c][0] == '\0') {
-                if(copy_in_string(TT[r][c], task, strlen(TT[r][c]), strlen(task)) == -1)
+                if(copy_in_string(TT[r][c], task, strlen(task)) == -1)
                     return -1;
                 return 0;
             }
@@ -472,12 +472,12 @@ int process_directory_recursively(char * folder, GHashTable * report_storage, in
     char object[PATH_MAX];
     char object_copy[PATH_MAX];
 
-    if(copy_in_string(object, folder, strlen(object), strlen(folder)) == -1) {
+    if(copy_in_string(object, folder, strlen(folder)) == -1) {
         show_debug_info("process_directory_recursively", "function copy_in_string() returned -1", "returning -1 to main()", "", -1);    
         return -1;
     }
 
-    if(copy_in_string(object_copy, object, strlen(object_copy), strlen(object)) == -1) {
+    if(copy_in_string(object_copy, object, strlen(object)) == -1) {
         show_debug_info("process_directory_recursively", "function copy_in_string() returned -1", "returning -1 to main()", "", -1);
         return -1;
     }
@@ -493,13 +493,13 @@ int process_directory_recursively(char * folder, GHashTable * report_storage, in
         if(directory_stat->d_name[0] =='.')
             continue;
 
-        if(copy_in_string(object, object_copy, strlen(object), strlen(object_copy)) == -1) {
+        if(copy_in_string(object, object_copy, strlen(object_copy)) == -1) {
             show_debug_info("process_directory_recursively", "function copy_in_string() returned -1", "returning -1 to main()", "", -1);
             return -1;
         }
         
         if(make_file_name(object, directory_stat->d_name, strlen(object), strlen(directory_stat->d_name)) == -1) {
-            show_debug_info("process_directory_recursively", "function copy_in_string() returned -1", "returning -1 to main()", "", -1);
+            show_debug_info("process_directory_recursively", "function make_file_name() returned -1", "returning -1 to main()", "", -1);
             return -1;
         }
         
