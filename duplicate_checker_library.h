@@ -372,7 +372,7 @@ int send_tasks_fill_report_storage(GHashTable * report_storage, int rows, int co
 
             left_count = sizeof(char) * task_length;
             do {
-                processed_bytes = write(pipes[mwcr][1], TT[pi][ti], left_count);
+                processed_bytes = write(pipes[mwcr][1], TT[pi][ti] + sum_bytes, left_count);
                 if(processed_bytes == -1) {
                     show_debug_info("send_tasks_fill_report_storage", "error in writing in pipe by file descriptor", "", "", -1);
                     return -1;
@@ -401,7 +401,7 @@ int send_tasks_fill_report_storage(GHashTable * report_storage, int rows, int co
 
             left_count = sizeof(char) * task_length;
             do {
-                processed_bytes = read(pipes[cwmr][0], task, left_count);
+                processed_bytes = read(pipes[cwmr][0], task + sum_bytes, left_count);
                 if(processed_bytes == -1) {
                     show_debug_info("send_tasks_fill_report_storage", "error in reading from pipe by file descriptor", "", "", -1);
                     return -1;
@@ -415,7 +415,7 @@ int send_tasks_fill_report_storage(GHashTable * report_storage, int rows, int co
 
             left_count = sizeof(unsigned char) * hash_length;
             do {
-                processed_bytes = read(pipes[cwmr][0], sha256_hash, left_count);
+                processed_bytes = read(pipes[cwmr][0], sha256_hash + sum_bytes, left_count);
                 if(processed_bytes == -1) {
                     show_debug_info("send_tasks_fill_report_storage", "error in reading from pipe by file descriptor", "", "", -1);
                     return -1;
