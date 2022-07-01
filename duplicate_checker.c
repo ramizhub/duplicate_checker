@@ -103,7 +103,7 @@ int main(int argc, char * argv[])
                     /*  Waiting for data to be received from the parent process. */
                     left_count = sizeof(int);
                     do {
-                        processed_bytes = read(pipes[mwcr][0], &task_length, left_count);
+                        processed_bytes = read(pipes[mwcr][0], (unsigned char *)&task_length + sum_bytes, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in reading from pipe by file descriptor", "", "", -1);
                             exit(EXIT_FAILURE);
@@ -138,7 +138,7 @@ int main(int argc, char * argv[])
                     /*  Sending processed data to parent. */
                     left_count = sizeof(int);
                     do {
-                        processed_bytes = write(pipes[cwmr][1], &task_length, left_count);
+                        processed_bytes = write(pipes[cwmr][1], (unsigned char *)&task_length + sum_bytes, left_count);
                         if(processed_bytes == -1) {
                             show_debug_info("send_tasks_fill_report_storage", "error in writing in pipe by file descriptor", "", "", -1);
                             exit(EXIT_FAILURE);
