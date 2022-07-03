@@ -1,3 +1,5 @@
+![Smith](smith123.jpg)
+
 # __duplicate_checker__
 
 duplicate_checker searches for duplicates in the selected directory and has the property of being executed by several processes.
@@ -78,6 +80,4 @@ Files testfile1 and testfile2 are identical
 
 Support
 ===========
-[Email](rearericu@gmail.com)
-
-
+Email: rearericu@gmail.com
